@@ -2,7 +2,7 @@
 
 import yfinance as yf
 import requests
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 
 def get_eur_usd() -> Optional[float]:
@@ -43,3 +43,32 @@ def get_market_data() -> Dict[str, Optional[float]]:
         "BTC/EUR": get_btc_eur()
     }
 
+def get_history_data(symbol: str, period: str = "1mo") -> List[Dict[str, Any]]:
+    """
+    Fetch historical data using yfinance.
+    Returns a list of {"date": "YYYY-MM-DD", "close": float}
+    """
+    yf_symbol_map = {
+        "CAC40": "^FCHI",
+        "BTC_EUR": "BTC-EUR",
+        "EUR_USD": "EURUSD=X",
+    }
+
+    yf_symbol = yf_symbol_map.get(symbol.upper())
+    if yf_symbol is None:
+        return []
+
+    try:
+        ticker = yf.Ticker(yf_symbol)
+        hist = ticker.history(period=period)
+
+        points = []
+        for index, row in hist.iterrows():
+            points.append({
+                "date": index.strftime("%Y-%m-%d"),
+                "close": round(float(row["Close"]), 2)
+            })
+
+        return points
+    except Exception:
+        return []

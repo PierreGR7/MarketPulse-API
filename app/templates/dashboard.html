@@ -2,34 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>MarketPulse Dashboard</title>
+    <title>MarketPulse - Dashboard</title>
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     />
-</head>
-<body class="bg-light">
-<div class="container py-4">
-    <h1 class="mb-4">MarketPulse – Financial Indicators</h1>
 
-    <div class="card mb-3">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background-color: #f5f6fa;
+        }
+        .card {
+            border-radius: 15px;
+        }
+        .navbar {
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+
+<body>
+{% include "navigation_home.html" %}
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="/marketpulse">MarketPulse</a>
+  </div>
+</nav>
+
+<div class="container py-4">
+
+    <h1 class="mb-4">📈 Market Dashboard</h1>
+
+    <!-- INDICATORS -->
+    <div class="row mb-4">
+
+        {% for label, value in {"EUR/USD": data["EUR/USD"], "CAC40": data["CAC40"], "BTC/EUR": data["BTC/EUR"]}.items() %}
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-4">
+                <h5 class="text-muted">{{ label }}</h5>
+                <h2 class="fw-bold">{{ value }}</h2>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- CHART -->
+    <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h5 class="card-title">Latest values</h5>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <strong>EUR/USD:</strong> {{ data["EUR/USD"] }}
-                </li>
-                <li class="list-group-item">
-                    <strong>CAC40:</strong> {{ data["CAC40"] }}
-                </li>
-                <li class="list-group-item">
-                    <strong>BTC/EUR:</strong> {{ data["BTC/EUR"] }}
-                </li>
-            </ul>
+            <h4 class="mb-3">CAC40 History (1 Month)</h4>
+            <canvas id="historyChart" height="100"></canvas>
         </div>
     </div>
 
-    <p class="text-muted">Data provided by public market APIs (yfinance, exchange rates, crypto).</p>
 </div>
+
+<script>
+fetch("/marketpulse/history?symbol=CAC40&period=1mo")
+    .then(r => r.json())
+    .then(json => {
+        const labels = json.history.map(p => p.date);
+        const close = json.history.map(p => p.close);
+
+        new Chart(document.getElementById("historyChart"), {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Close Price",
+                    data: close,
+                    borderColor: "rgb(75, 192, 192)",
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
