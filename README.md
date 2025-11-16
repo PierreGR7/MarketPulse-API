@@ -1,37 +1,74 @@
-# MarketPulse-API
-This project is a small financial micro-service built with Flask, Python, and Docker.
-It exposes real-time market indicators through a simple REST API.
+### MarketPulse API
 
-1. run.py :
-It starts the Flask server.
-When you run python run.py, it loads the app and exposes the API on port 5000.
+A small Flask API that provides live market indicators (EUR/USD, CAC40, BTC/EUR), historical data, and a minimal dashboard built with Bootstrap and Chart.js.
+The project is fully dockerized and designed with a simple modular structure.
 
-2. app/
-    - __init__.py : Creates the Flask application and registers the routes using a Blueprint
+## Features
 
-    - routes.py : Defines the /marketpulse/latest endpoint. When this endpoint is called, it asks   the service layer to fetch the market data
+Live market data (JSON)
 
-    - services/market_service.py : Contains all the functions that fetch data
-        - EUR/USD exchange rate
-        - CAC40 index
-        - Bitcoin price
-        Everything is aggregated into a JSON
+Historical price data (JSON)
 
-3. requirements.txt :
-All the librairies used in the project (Flask, yfinance, requests)
-They are installed automatically when building the Docker image
+Dashboard UI (HTML)
 
-4. Dockerfile :
-It describes how ti run the API inside a container :
-- install python
-- install dependencies (requirements.txt)
-- copy the code source
-- expose port 5000
-- start the server
+History viewer with charts (HTML)
 
-5. docker-compose.yml :
-Runs the API with "docker compose up --build" this launches the service on http://localhost:5000/marketpulse/latest
+Config endpoint
 
-6. tests/
-Unit tests for the routes and services
+Development + production Docker setup
 
+## Project Structure
+
+app/
+├── __init__.py          # Flask app factory + logging
+├── routes.py            # Routes (JSON + HTML)
+├── config.py            
+├── services/
+│   └── market_service.py  # Data fetching with yfinance, requests, coingecko
+└── templates/           # HTML pages (home, dashboard, history, navigation_home)
+run.py
+Dockerfile
+docker-compose.yml # Development
+docker-compose.prod.yml
+requirements.txt
+
+## Key Endpoints
+
+# JSON
+
+/marketpulse/latest
+
+/marketpulse/history
+
+/marketpulse/config
+
+# HTML
+
+/marketpulse/
+
+/marketpulse/dashboard
+
+/marketpulse/history/view
+
+### HOW TO RUN
+## Run With Docker
+
+# Development
+docker compose up --build
+
+# Production
+docker compose -f docker-compose.prod.yml up --build
+
+## Run Without Docker
+pip install -r requirements.txt
+python run.py
+
+## Example (Latest Data)
+{
+  "timestamp": "2025-11-16T13:04:10Z",
+  "data": {
+    "EUR/USD": 1.07,
+    "CAC40": 7150.09,
+    "BTC/EUR": 68000.12
+  }
+}
