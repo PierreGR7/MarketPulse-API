@@ -1,6 +1,6 @@
 # MarketPulse API
 
-A small Flask API that provides live market indicators (EUR/USD, CAC40, BTC/EUR), historical data, and a minimal dashboard built with Bootstrap and Chart.js.
+A small Flask API that provides live market indicators (EUR/USD, CAC40, BTC/EUR), historical data, and a minimal dashboard.
 The project is fully dockerized and designed with a simple modular structure.
 
 ## Features
@@ -16,21 +16,6 @@ History viewer with charts (HTML)
 Config endpoint
 
 Development + production Docker setup
-
-## Project Structure
-
-app/
-├── __init__.py          # Flask app factory + logging
-├── routes.py            # Routes (JSON + HTML)
-├── config.py            
-├── services/
-│   └── market_service.py  # Data fetching with yfinance, requests, coingecko
-└── templates/           # HTML pages (home, dashboard, history, navigation_home)
-run.py
-Dockerfile
-docker-compose.yml # Development
-docker-compose.prod.yml
-requirements.txt
 
 ## Key Endpoints
 
