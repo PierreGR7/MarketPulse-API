@@ -61,7 +61,9 @@ docker compose up --build
 docker compose -f docker-compose.prod.yml up --build
 
 ## Run Without Docker
+
 pip install -r requirements.txt
+
 python run.py
 
 ## Example (Latest Data)
